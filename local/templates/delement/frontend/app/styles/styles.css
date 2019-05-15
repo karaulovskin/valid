@@ -1,0 +1,100 @@
+*, ::before, ::after {
+    box-sizing: border-box;
+}
+
+html {
+    height: 100% !important;
+    font-family: 'UbuntuRegular';
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 400;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &.overflow-hidden {
+        overflow: hidden;
+    }
+}
+
+body {
+    color: var(--c-black);
+    height: 100% !important;
+    max-height: 100%;
+    min-width: 320px;
+}
+
+#svg-sprite {
+    display: none !important;
+}
+
+.flow-container {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    z-index: 3;
+    width: 100%;
+    min-height: 100%;
+    overflow: hidden;
+}
+
+.content {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding-bottom: 108px;
+}
+
+.container {
+    max-width: 1590px;
+    margin: auto;
+    padding: 0 30px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'UbuntuBold';
+}
+
+h1 {
+    font-size: 42px;
+}
+
+h2 {
+    font-size: 36px;
+}
+
+h3 {
+    font-size: 32px;
+}
+
+h4 {
+    font-size: 26px;
+}
+
+h5 {
+    font-size: 22px;
+}
+
+h6 {
+    font-size: 18px;
+}
+
+img {
+    max-width: 100%;
+}
+
+a {
+    text-decoration: none;
+    line-height: 1;
+
+    &:hover {
+        text-decoration: none;
+    }
+}
+
+.clearfix:after,
+.clearfix:before {
+    content: '';
+    display: table;
+    clear: both;
+}
+

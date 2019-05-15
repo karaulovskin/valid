@@ -1,0 +1,42 @@
+<% locals.setLayout('base.ejs') %>
+<% locals.block('title', 'Валидация') %>
+
+<div class="container">
+    <div class="form-wrapp">
+        <form action="" class="form">
+            <div class="row">
+                <label class="label">
+                    <div class="label__title">Имя</div>
+                    <div class="label__input">
+                        <input type="text" class="input">
+                    </div>
+                </label>
+            </div>
+            <div class="row">
+                <label class="label">
+                    <div class="label__title">Фамилия</div>
+                    <div class="label__input">
+                        <input type="text" class="input">
+                    </div>
+                </label>
+            </div>
+            <div class="row">
+                <label class="label">
+                    <div class="label__title">Сообщение</div>
+                    <div class="label__input">
+                        <textarea type="text" class="textarea"></textarea>
+                    </div>
+                </label>
+            </div>
+            <div class="row">
+                <div class="checkbox">
+                    <label class="checkbox__label">
+                        <input type="checkbox" class="checkbox__input">
+                        <div class="checkbox__fake"></div>
+                        <div class="checkbox__desc"></div>
+                    </label>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
