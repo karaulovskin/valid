@@ -1,4 +1,8 @@
 :root {
     --c-black: #333333;
     --c-white: #ffffff;
+    --c-red: #fe3e3e;
+    --c-green: #4ded75;
+
+    --inputBorder: #cccccc;
 }

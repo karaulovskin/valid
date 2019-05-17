@@ -12,6 +12,7 @@ import imagesLoaded from 'imagesloaded'
 window.imagesLoaded = imagesLoaded;
 
 // load modules
+import ValidateForm from'./js/validateForm'
 import SvgUse from'./js/svgUse'
 
 // Run components
@@ -39,9 +40,8 @@ if (App.debug) {
 document.addEventListener('DOMContentLoaded', function() {
     objectFitImages();
 
+    App.ValidateForm = new ValidateForm();
     App.SvgUse = new SvgUse();
-
-
 
     $('.inputmask').inputmask({mask: "+7 (999) 999-99-99", greedy: false});
 

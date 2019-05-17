@@ -113,7 +113,11 @@ var _imagesloaded = __webpack_require__(8);
 
 var _imagesloaded2 = _interopRequireDefault(_imagesloaded);
 
-var _svgUse = __webpack_require__(10);
+var _validateForm = __webpack_require__(10);
+
+var _validateForm2 = _interopRequireDefault(_validateForm);
+
+var _svgUse = __webpack_require__(11);
 
 var _svgUse2 = _interopRequireDefault(_svgUse);
 
@@ -153,6 +157,7 @@ if (App.debug) {
 document.addEventListener('DOMContentLoaded', function () {
     (0, _objectFitImages2.default)();
 
+    App.ValidateForm = new _validateForm2.default();
     App.SvgUse = new _svgUse2.default();
 
     $('.inputmask').inputmask({ mask: "+7 (999) 999-99-99", greedy: false });
@@ -11644,6 +11649,133 @@ return EvEmitter;
 
 /***/ }),
 /* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var validateForm = function () {
+    function validateForm() {
+        _classCallCheck(this, validateForm);
+
+        this.form = '[data-form]';
+        this.formRequired = '[data-form-required]';
+        this.inputPlaceholder = '[data-input-placeholder]';
+
+        this.bindEvents();
+    }
+
+    _createClass(validateForm, [{
+        key: 'validate',
+        value: function validate($elem) {
+            var self = this;
+            var type = $elem.attr('type');
+
+            switch (type) {
+                case 'email':
+                    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+
+                    if (!re.test($elem.val())) {
+                        this.invalid($elem);
+                    } else {
+                        this.valid($elem);
+                    }
+
+                    break;
+                case 'phone':
+                    var cleanPhone = $elem.val().replace(/\s/g, "");
+                    var re = /^[+]7*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g;
+
+                    if (!re.test(cleanPhone)) {
+                        this.invalid($elem);
+                    } else {
+                        this.valid($elem);
+                    }
+
+                    break;
+                case 'dropdown':
+
+                    break;
+                case 'password':
+
+                    break;
+                default:
+
+                    if ($.trim($elem.val()) === '') {
+                        this.invalid($elem);
+                    } else {
+                        this.valid($elem);
+                    }
+
+                    break;
+            }
+        }
+    }, {
+        key: 'focusIn',
+        value: function focusIn($elem) {
+            if (!$elem.hasClass('invalid')) {
+                var placeholderVal = $elem.attr('placeholder');
+                $elem.attr('data-input-placeholder', placeholderVal);
+            } else {
+                var saveValue = $elem.attr('data-input-placeholder');
+                $elem.attr('placeholder', saveValue);
+            }
+        }
+    }, {
+        key: 'invalid',
+        value: function invalid($elem) {
+            $elem.addClass('invalid');
+            $elem.closest('div').append('<div class="check-invalid"></div>');
+            this.placeholderInvalid($elem);
+        }
+    }, {
+        key: 'valid',
+        value: function valid($elem) {
+            $elem.removeClass('invalid');
+            $elem.addClass('valid');
+            $elem.closest('div').append('<div class="check-valid"></div>');
+        }
+    }, {
+        key: 'placeholderInvalid',
+        value: function placeholderInvalid($elem) {
+            $elem.attr('placeholder', 'Поле не заполнено');
+        }
+    }, {
+        key: 'bindEvents',
+        value: function bindEvents() {
+            var self = this;
+
+            $(document).on('focusout', this.formRequired, function () {
+                self.validate($(this));
+            });
+
+            $(document).on('focusin', this.formRequired, function () {
+                self.focusIn($(this));
+            });
+
+            $(document).on('submit', this.form, function () {
+
+                return false;
+            });
+        }
+    }]);
+
+    return validateForm;
+}();
+
+exports.default = validateForm;
+;
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
