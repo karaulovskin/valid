@@ -7,8 +7,33 @@ export default class validateForm {
         this.bindEvents();
     }
 
-    validate ($elem) {
-        let self = this;
+    focusIn ($elem) {
+        if (!$elem.hasClass('invalid')) {
+            let placeholderVal = $elem.attr('placeholder');
+            $elem.attr('data-input-placeholder', placeholderVal);
+        } else {
+            let saveValue = $elem.attr('data-input-placeholder');
+            $elem.attr('placeholder', saveValue);
+        }
+    }
+
+    invalid ($elem) {
+        $elem.addClass('invalid');
+        $elem.closest('div').append('<div class="check-invalid"></div>');
+        this.placeholderInvalid($elem);
+    }
+
+    valid ($elem) {
+        $elem.removeClass('invalid');
+        $elem.addClass('valid');
+        $elem.closest('div').append('<div class="check-valid"></div>');
+    }
+
+    placeholderInvalid ($elem) {
+        $elem.attr('placeholder', 'Поле не заполнено');
+    }
+
+    validateInput ($elem) {
         let type = $elem.attr('type');
 
         switch (type) {
@@ -51,38 +76,48 @@ export default class validateForm {
         }
     }
 
-    focusIn ($elem) {
-        if (!$elem.hasClass('invalid')) {
-            let placeholderVal = $elem.attr('placeholder');
-            $elem.attr('data-input-placeholder', placeholderVal);
-        } else {
-            let saveValue = $elem.attr('data-input-placeholder');
-            $elem.attr('placeholder', saveValue);
-        }
+    validate ($form) {
+        let self = this;
+        let $inputs = $form.find($(this.formRequired));
+        let inputsAmount = $inputs.length;
+        let validCount = 0;
+
+        $inputs.each(function() {
+            if ($(this).hasClass('valid')) {
+                validCount++
+            } else {
+                self.invalid($(this));
+            }
+        });
+
+        let validateForm = new Promise((resolve, reject) => {
+            if (inputsAmount === validCount) {
+                resolve();
+            } else {
+                reject();
+            }
+        });
+
+        validateForm.then(
+            () => {
+                console.log('форма валидна!');
+                return this.formSend();
+            },
+            () => {
+                console.log('форма не валидна!');
+            }
+        );
     }
 
-    invalid ($elem) {
-        $elem.addClass('invalid');
-        $elem.closest('div').append('<div class="check-invalid"></div>');
-        this.placeholderInvalid($elem);
-    }
+    formSend () {
 
-    valid ($elem) {
-        $elem.removeClass('invalid');
-        $elem.addClass('valid');
-        $elem.closest('div').append('<div class="check-valid"></div>');
-    }
-
-    placeholderInvalid ($elem) {
-        $elem.attr('placeholder', 'Поле не заполнено');
     }
 
     bindEvents() {
         let self = this;
 
         $(document).on('focusout', this.formRequired, function () {
-            self.validate($(this));
-
+            self.validateInput($(this));
         });
 
         $(document).on('focusin', this.formRequired, function () {
@@ -90,8 +125,7 @@ export default class validateForm {
         });
 
         $(document).on('submit', this.form, function () {
-
-
+            self.validate($(this));
             return false;
         });
     }

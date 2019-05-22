@@ -11674,9 +11674,38 @@ var validateForm = function () {
     }
 
     _createClass(validateForm, [{
-        key: 'validate',
-        value: function validate($elem) {
-            var self = this;
+        key: 'focusIn',
+        value: function focusIn($elem) {
+            if (!$elem.hasClass('invalid')) {
+                var placeholderVal = $elem.attr('placeholder');
+                $elem.attr('data-input-placeholder', placeholderVal);
+            } else {
+                var saveValue = $elem.attr('data-input-placeholder');
+                $elem.attr('placeholder', saveValue);
+            }
+        }
+    }, {
+        key: 'invalid',
+        value: function invalid($elem) {
+            $elem.addClass('invalid');
+            $elem.closest('div').append('<div class="check-invalid"></div>');
+            this.placeholderInvalid($elem);
+        }
+    }, {
+        key: 'valid',
+        value: function valid($elem) {
+            $elem.removeClass('invalid');
+            $elem.addClass('valid');
+            $elem.closest('div').append('<div class="check-valid"></div>');
+        }
+    }, {
+        key: 'placeholderInvalid',
+        value: function placeholderInvalid($elem) {
+            $elem.attr('placeholder', 'Поле не заполнено');
+        }
+    }, {
+        key: 'validateInput',
+        value: function validateInput($elem) {
             var type = $elem.attr('type');
 
             switch (type) {
@@ -11719,42 +11748,48 @@ var validateForm = function () {
             }
         }
     }, {
-        key: 'focusIn',
-        value: function focusIn($elem) {
-            if (!$elem.hasClass('invalid')) {
-                var placeholderVal = $elem.attr('placeholder');
-                $elem.attr('data-input-placeholder', placeholderVal);
-            } else {
-                var saveValue = $elem.attr('data-input-placeholder');
-                $elem.attr('placeholder', saveValue);
-            }
+        key: 'validate',
+        value: function validate($form) {
+            var _this = this;
+
+            var self = this;
+            var $inputs = $form.find($(this.formRequired));
+            var inputsAmount = $inputs.length;
+            var validCount = 0;
+
+            $inputs.each(function () {
+                if ($(this).hasClass('valid')) {
+                    validCount++;
+                } else {
+                    self.invalid($(this));
+                }
+            });
+
+            var validateForm = new Promise(function (resolve, reject) {
+                if (inputsAmount === validCount) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            });
+
+            validateForm.then(function () {
+                console.log('форма валидна!');
+                return _this.formSend();
+            }, function () {
+                console.log('форма не валидна!');
+            });
         }
     }, {
-        key: 'invalid',
-        value: function invalid($elem) {
-            $elem.addClass('invalid');
-            $elem.closest('div').append('<div class="check-invalid"></div>');
-            this.placeholderInvalid($elem);
-        }
-    }, {
-        key: 'valid',
-        value: function valid($elem) {
-            $elem.removeClass('invalid');
-            $elem.addClass('valid');
-            $elem.closest('div').append('<div class="check-valid"></div>');
-        }
-    }, {
-        key: 'placeholderInvalid',
-        value: function placeholderInvalid($elem) {
-            $elem.attr('placeholder', 'Поле не заполнено');
-        }
+        key: 'formSend',
+        value: function formSend() {}
     }, {
         key: 'bindEvents',
         value: function bindEvents() {
             var self = this;
 
             $(document).on('focusout', this.formRequired, function () {
-                self.validate($(this));
+                self.validateInput($(this));
             });
 
             $(document).on('focusin', this.formRequired, function () {
@@ -11762,7 +11797,7 @@ var validateForm = function () {
             });
 
             $(document).on('submit', this.form, function () {
-
+                self.validate($(this));
                 return false;
             });
         }
