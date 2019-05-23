@@ -18,14 +18,18 @@ export default class validateForm {
     }
 
     invalid ($elem) {
-        $elem.addClass('invalid');
-        $elem.closest('div').append('<div class="check-invalid"></div>');
-        this.placeholderInvalid($elem);
+        if (!$elem.hasClass('invalid')) {
+            $elem.addClass('invalid');
+            $elem.siblings('.check-valid').remove();
+            $elem.closest('div').append('<div class="check-invalid"></div>');
+            this.placeholderInvalid($elem);
+        }
     }
 
     valid ($elem) {
         $elem.removeClass('invalid');
         $elem.addClass('valid');
+        $elem.siblings('.check-invalid').remove();
         $elem.closest('div').append('<div class="check-valid"></div>');
     }
 
@@ -35,7 +39,6 @@ export default class validateForm {
 
     validateInput ($elem) {
         let type = $elem.attr('type');
-
         switch (type) {
             case 'email':
                 var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
@@ -124,7 +127,8 @@ export default class validateForm {
             xhr.send();
         });
         p.then((responseText) => {
-            console.log('файл загружен!')
+            console.log('файл загружен!');
+            $form[0].reset();
             test.innerText = responseText;
         });
     }

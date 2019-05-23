@@ -11687,15 +11687,19 @@ var validateForm = function () {
     }, {
         key: 'invalid',
         value: function invalid($elem) {
-            $elem.addClass('invalid');
-            $elem.closest('div').append('<div class="check-invalid"></div>');
-            this.placeholderInvalid($elem);
+            if (!$elem.hasClass('invalid')) {
+                $elem.addClass('invalid');
+                $elem.siblings('.check-valid').remove();
+                $elem.closest('div').append('<div class="check-invalid"></div>');
+                this.placeholderInvalid($elem);
+            }
         }
     }, {
         key: 'valid',
         value: function valid($elem) {
             $elem.removeClass('invalid');
             $elem.addClass('valid');
+            $elem.siblings('.check-invalid').remove();
             $elem.closest('div').append('<div class="check-valid"></div>');
         }
     }, {
@@ -11707,7 +11711,6 @@ var validateForm = function () {
         key: 'validateInput',
         value: function validateInput($elem) {
             var type = $elem.attr('type');
-
             switch (type) {
                 case 'email':
                     var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
@@ -11798,6 +11801,7 @@ var validateForm = function () {
             });
             p.then(function (responseText) {
                 console.log('файл загружен!');
+                $form[0].reset();
                 test.innerText = responseText;
             });
         }
