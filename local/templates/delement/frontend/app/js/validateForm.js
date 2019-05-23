@@ -92,7 +92,7 @@ export default class validateForm {
 
         let validateForm = new Promise((resolve, reject) => {
             if (inputsAmount === validCount) {
-                resolve();
+                resolve($form);
             } else {
                 reject();
             }
@@ -100,8 +100,7 @@ export default class validateForm {
 
         validateForm.then(
             () => {
-                console.log('форма валидна!');
-                return this.formSend();
+                return this.formSend($form);
             },
             () => {
                 console.log('форма не валидна!');
@@ -109,8 +108,25 @@ export default class validateForm {
         );
     }
 
-    formSend () {
+    formSend ($form) {
+        let formData = new FormData($form[0]);
+        let url = '/test.txt';
+        let p = new Promise((resolve, reject) => {
+            let xhr = new XMLHttpRequest();
 
+            xhr.open('Get', url);
+            xhr.addEventListener('load', () => {
+                resolve(xhr.responseText);
+            });
+            xhr.addEventListener('error', () => {
+                reject();
+            });
+            xhr.send();
+        });
+        p.then((responseText) => {
+            console.log('файл загружен!')
+            test.innerText = responseText;
+        });
     }
 
     bindEvents() {

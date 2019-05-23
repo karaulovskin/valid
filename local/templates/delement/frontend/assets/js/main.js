@@ -11767,22 +11767,40 @@ var validateForm = function () {
 
             var validateForm = new Promise(function (resolve, reject) {
                 if (inputsAmount === validCount) {
-                    resolve();
+                    resolve($form);
                 } else {
                     reject();
                 }
             });
 
             validateForm.then(function () {
-                console.log('форма валидна!');
-                return _this.formSend();
+                return _this.formSend($form);
             }, function () {
                 console.log('форма не валидна!');
             });
         }
     }, {
         key: 'formSend',
-        value: function formSend() {}
+        value: function formSend($form) {
+            var formData = new FormData($form[0]);
+            var url = '/test.txt';
+            var p = new Promise(function (resolve, reject) {
+                var xhr = new XMLHttpRequest();
+
+                xhr.open('Get', url);
+                xhr.addEventListener('load', function () {
+                    resolve(xhr.responseText);
+                });
+                xhr.addEventListener('error', function () {
+                    reject();
+                });
+                xhr.send();
+            });
+            p.then(function (responseText) {
+                console.log('файл загружен!');
+                test.innerText = responseText;
+            });
+        }
     }, {
         key: 'bindEvents',
         value: function bindEvents() {
