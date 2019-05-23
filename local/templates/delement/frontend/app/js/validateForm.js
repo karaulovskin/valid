@@ -128,7 +128,10 @@ export default class validateForm {
         });
         p.then((responseText) => {
             console.log('файл загружен!');
+            console.log($form.find($('.check-valid')));
+            console.log($form[0]);
             $form[0].reset();
+            $form.find($('.check-valid')).remove();
             test.innerText = responseText;
         });
     }
