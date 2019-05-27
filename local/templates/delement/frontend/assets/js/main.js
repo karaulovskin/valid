@@ -11781,16 +11781,11 @@ var validateForm = function () {
                     reject(console.log('форма не валидна!'));
                 }
             });
-
-            if (inputsAmount === validCount) {
-                this.formSend($form);
-            } else {
-                console.log('форма не валидна!');
-            }
         }
     }, {
         key: 'formSend',
         value: function formSend($form) {
+            var self = this;
             var formData = new FormData($form[0]);
             var url = '/test.json';
             var p = new Promise(function (resolve, reject) {
@@ -11806,11 +11801,12 @@ var validateForm = function () {
                 });
                 xhr.send();
             });
-            p.then(function (response) {
+            return p.then(function (response) {
                 console.log('файл загружен!');
                 $form[0].reset();
                 $form.find($('.check-valid')).remove();
-                console.log(response);
+
+                return response;
             });
         }
     }, {
@@ -11827,7 +11823,9 @@ var validateForm = function () {
             });
 
             $(document).on('submit', this.form, function () {
-                self.validate($(this));
+                self.validate($(this)).then(function (response) {
+                    console.log(response);
+                });
                 return false;
             });
         }

@@ -102,19 +102,15 @@ export default class validateForm {
         return new Promise((resolve, reject) => {
             if (inputsAmount === validCount) {
                 resolve(this.formSend($form));
+
             } else {
                 reject(console.log('форма не валидна!'));
             }
         });
-
-        if (inputsAmount === validCount) {
-            this.formSend($form);
-        } else {
-            console.log('форма не валидна!');
-        }
     }
 
     formSend ($form) {
+        let self = this;
         let formData = new FormData($form[0]);
         let url = '/test.json';
         let p = new Promise((resolve, reject) => {
@@ -130,11 +126,12 @@ export default class validateForm {
             });
             xhr.send();
         });
-        p.then((response) => {
+        return p.then((response) => {
             console.log('файл загружен!');
             $form[0].reset();
             $form.find($('.check-valid')).remove();
-            console.log(response);
+
+            return response;
         });
     }
 
@@ -150,7 +147,9 @@ export default class validateForm {
         });
 
         $(document).on('submit', this.form, function () {
-            self.validate($(this));
+            self.validate($(this)).then((response) => {
+                console.log(response);
+            });
             return false;
         });
     }
