@@ -39,12 +39,14 @@ export default class validateForm {
 
     validateInput ($elem) {
         let type = $elem.attr('type');
+        let checkResult = true;
         switch (type) {
             case 'email':
                 var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 
                 if (!re.test($elem.val())) {
-                    this.invalid($elem)
+                    this.invalid($elem);
+                    checkResult = false;
                 } else {
                     this.valid($elem)
                 }
@@ -55,9 +57,10 @@ export default class validateForm {
                 var re = /^[+]7*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g;
 
                 if (!re.test(cleanPhone)) {
-                    this.invalid($elem)
+                    this.invalid($elem);
+                    checkResult = false;
                 } else {
-                    this.valid($elem)
+                    this.valid($elem);
                 }
 
                 break;
@@ -70,13 +73,16 @@ export default class validateForm {
             default:
 
                 if ($.trim($elem.val()) === ''){
-                    this.invalid($elem)
+                    this.invalid($elem);
+                    checkResult = false;
                 } else {
                     this.valid($elem)
                 }
 
                 break;
         }
+
+        return checkResult;
     }
 
     validate ($form) {
@@ -93,46 +99,42 @@ export default class validateForm {
             }
         });
 
-        let validateForm = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             if (inputsAmount === validCount) {
-                resolve($form);
+                resolve(this.formSend($form));
             } else {
-                reject();
+                reject(console.log('форма не валидна!'));
             }
         });
 
-        validateForm.then(
-            () => {
-                return this.formSend($form);
-            },
-            () => {
-                console.log('форма не валидна!');
-            }
-        );
+        if (inputsAmount === validCount) {
+            this.formSend($form);
+        } else {
+            console.log('форма не валидна!');
+        }
     }
 
     formSend ($form) {
         let formData = new FormData($form[0]);
-        let url = '/test.txt';
+        let url = '/test.json';
         let p = new Promise((resolve, reject) => {
             let xhr = new XMLHttpRequest();
 
             xhr.open('Get', url);
+            xhr.responseType = 'json';
             xhr.addEventListener('load', () => {
-                resolve(xhr.responseText);
+                resolve(xhr.response);
             });
             xhr.addEventListener('error', () => {
                 reject();
             });
             xhr.send();
         });
-        p.then((responseText) => {
+        p.then((response) => {
             console.log('файл загружен!');
-            console.log($form.find($('.check-valid')));
-            console.log($form[0]);
             $form[0].reset();
             $form.find($('.check-valid')).remove();
-            test.innerText = responseText;
+            console.log(response);
         });
     }
 

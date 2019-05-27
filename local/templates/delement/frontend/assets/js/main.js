@@ -11711,12 +11711,14 @@ var validateForm = function () {
         key: 'validateInput',
         value: function validateInput($elem) {
             var type = $elem.attr('type');
+            var checkResult = true;
             switch (type) {
                 case 'email':
                     var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 
                     if (!re.test($elem.val())) {
                         this.invalid($elem);
+                        checkResult = false;
                     } else {
                         this.valid($elem);
                     }
@@ -11728,6 +11730,7 @@ var validateForm = function () {
 
                     if (!re.test(cleanPhone)) {
                         this.invalid($elem);
+                        checkResult = false;
                     } else {
                         this.valid($elem);
                     }
@@ -11743,12 +11746,15 @@ var validateForm = function () {
 
                     if ($.trim($elem.val()) === '') {
                         this.invalid($elem);
+                        checkResult = false;
                     } else {
                         this.valid($elem);
                     }
 
                     break;
             }
+
+            return checkResult;
         }
     }, {
         key: 'validate',
@@ -11768,44 +11774,43 @@ var validateForm = function () {
                 }
             });
 
-            var validateForm = new Promise(function (resolve, reject) {
+            return new Promise(function (resolve, reject) {
                 if (inputsAmount === validCount) {
-                    resolve($form);
+                    resolve(_this.formSend($form));
                 } else {
-                    reject();
+                    reject(console.log('форма не валидна!'));
                 }
             });
 
-            validateForm.then(function () {
-                return _this.formSend($form);
-            }, function () {
+            if (inputsAmount === validCount) {
+                this.formSend($form);
+            } else {
                 console.log('форма не валидна!');
-            });
+            }
         }
     }, {
         key: 'formSend',
         value: function formSend($form) {
             var formData = new FormData($form[0]);
-            var url = '/test.txt';
+            var url = '/test.json';
             var p = new Promise(function (resolve, reject) {
                 var xhr = new XMLHttpRequest();
 
                 xhr.open('Get', url);
+                xhr.responseType = 'json';
                 xhr.addEventListener('load', function () {
-                    resolve(xhr.responseText);
+                    resolve(xhr.response);
                 });
                 xhr.addEventListener('error', function () {
                     reject();
                 });
                 xhr.send();
             });
-            p.then(function (responseText) {
+            p.then(function (response) {
                 console.log('файл загружен!');
-                console.log($form.find($('.check-valid')));
-                console.log($form[0]);
                 $form[0].reset();
                 $form.find($('.check-valid')).remove();
-                test.innerText = responseText;
+                console.log(response);
             });
         }
     }, {
